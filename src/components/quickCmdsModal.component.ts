@@ -12,7 +12,7 @@ import { BaseTerminalTabComponent as TerminalTabComponent } from 'terminus-termi
 export class QuickCmdsModalComponent {
     cmds: QuickCmds[]
     quickCmd: string
-    appendCR: boolean
+    commAppendCR: boolean
     childGroups: ICmdGroup[]
     groupCollapsed: {[id: string]: boolean} = {}
 
@@ -24,17 +24,25 @@ export class QuickCmdsModalComponent {
 
     ngOnInit () {
         this.cmds = this.config.store.qc.cmds
-        this.appendCR = true
+        this.commAppendCR = this.config.store.qc.commAppendCR
         this.refresh()
     }
 
+    onCommAppendCRChange () {
+        if (this.commAppendCR != this.config.store.qc.commAppendCR) {
+            this.config.store.qc.commAppendCR = this.commAppendCR
+            this.config.save()
+            this.refresh()
+        }
+    }
+
     quickSend () {
-        this._send(this.app.activeTab, this.quickCmd + (this.appendCR ? "\n" : ""))
+        this._send(this.app.activeTab, this.quickCmd, this.commAppendCR)
         this.close()
     }
 
     quickSendAll() {
-        this._sendAll(this.quickCmd + (this.appendCR ? "\n" : ""))
+        this._sendAll(this.quickCmd, this.commAppendCR)
         this.close()
     }
 
@@ -42,21 +50,29 @@ export class QuickCmdsModalComponent {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async _send (tab: BaseTabComponent, cmd: string) {    
+    async _send (tab: BaseTabComponent, cmd: string, appendCR: boolean) {    
         
         if (tab instanceof SplitTabComponent) {
-            this._send((tab as SplitTabComponent).getFocusedTab(), cmd)
+            this._send((tab as SplitTabComponent).getFocusedTab(), cmd, appendCR)
         }
         if (tab instanceof TerminalTabComponent) {
             let currentTab = tab as TerminalTabComponent
 
-            console.log("Sending " + cmd);
+            console.log("Sending full " + cmd);
 
-            let cmds=cmd.split(/(?:\r\n|\r|\n)/)
+            let cmds=cmd.split(/(?:\r\n|\r|\n)/);
+            let full_cmds = "";
 
             for(let cmd of cmds) {
-                console.log("Sending " + cmd);
+                console.log("Sending subcommand " + cmd);
 
+                if (cmd.length == 0) {
+                    continue;
+                }
+
+                if (full_cmds.length > 0){
+                    full_cmds += " && ";
+                }
 
                 if(cmd.startsWith('\\s')){
                     cmd=cmd.replace('\\s','');
@@ -74,21 +90,23 @@ export class QuickCmdsModalComponent {
                         });
                 }
 
-                currentTab.sendInput(cmd+"\n");
-                
+                full_cmds += cmd;
             }
 
+            if (full_cmds.length > 0){
+                currentTab.sendInput(full_cmds + (this.commAppendCR || appendCR ? "\n" : ""));
+            }
         }
     }
 
-    _sendAll (cmd: string) {
+    _sendAll (cmd: string, appendCR: boolean) {
         for (let tab of this.app.tabs) {
             if (tab instanceof SplitTabComponent) {
                 for (let subtab of (tab as SplitTabComponent).getAllTabs()) {
-                    this._send(subtab, cmd)
+                    this._send(subtab, cmd, appendCR)
                 }
             } else {
-                this._send(tab, cmd)
+                this._send(tab, cmd, appendCR)
             }
         }
     }
@@ -100,10 +118,10 @@ export class QuickCmdsModalComponent {
 
     send (cmd: QuickCmds, event: MouseEvent) {
         if (event.ctrlKey) {
-            this._sendAll(cmd.text + (cmd.appendCR ? "\n" : ""))
+            this._sendAll(cmd.text, cmd.appendCR)
         }
         else {
-            this._send(this.app.activeTab, cmd.text + (cmd.appendCR ? "\n" : ""))
+            this._send(this.app.activeTab, cmd.text, cmd.appendCR)
         }
         this.close()
     }
@@ -112,12 +130,12 @@ export class QuickCmdsModalComponent {
         if (event.shiftKey) {
             if (event.ctrlKey) {
                 for (let cmd of group.cmds) {
-                    this._sendAll(cmd.text + (cmd.appendCR ? "\n" : ""))
+                    this._sendAll(cmd.text, cmd.appendCR)
                 }
             }
             else {
                 for (let cmd of group.cmds) {
-                    this._send(this.app.activeTab, cmd.text + (cmd.appendCR ? "\n" : ""))
+                    this._send(this.app.activeTab, cmd.text, cmd.appendCR)
                 }
             }
         }

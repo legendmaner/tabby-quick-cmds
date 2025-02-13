@@ -1,8 +1,8 @@
 {
   "name": "tabby-quick-cmds",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "Quick commands manager for Tabby",
-  "homepage": "https://github.com/minyoad/terminus-quick-cmds",
+  "homepage": "https://github.com/yuzifu/terminus-quick-cmds",
   "keywords": [
     "terminus-plugin",
     "tabby-plugin",
@@ -58,9 +58,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/minyoad/terminus-quick-cmds.git"
+    "url": "git+https://github.com/yuzifu/terminus-quick-cmds.git"
   },
   "bugs": {
-    "url": "https://github.com/minyoad/terminus-quick-cmds/issues"
+    "url": "https://github.com/yuzifu/terminus-quick-cmds/issues"
   }
 }

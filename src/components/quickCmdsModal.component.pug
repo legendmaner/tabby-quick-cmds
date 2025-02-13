@@ -9,9 +9,10 @@
             (keyup.enter)='quickSend()',
             (keyup.control.enter)='quickSendAll()',
         )
-        toggle.ml-1(
+        toggle.ml-1.appendCR(
             title="Automatically append a '\\n' char to the end",
-            [(ngModel)]='appendCR',
+            [(ngModel)]='commAppendCR',
+            (ngModelChange)='onCommAppendCRChange()',
         )
 
     .list-group.mt-3.connections-list
