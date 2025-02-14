@@ -25,6 +25,10 @@ export class QuickCmdsModalComponent {
     ngOnInit () {
         this.cmds = this.config.store.qc.cmds
         this.commAppendCR = this.config.store.qc.commAppendCR
+        const _groups = this.cmds.map(_cmd => _cmd.group)
+        _groups.forEach(group => {
+                this.groupCollapsed[group] = true
+        })
         this.refresh()
     }
 
