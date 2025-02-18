@@ -7,19 +7,38 @@ import { PromptModalComponent } from './promptModal.component'
 
 @Component({
     template: require('./quickCmdsSettingsTab.component.pug'),
+    styles: [require('./quickCmdsSettingsTab.component.scss')],
 })
 export class QuickCmdsSettingsTabComponent {
     quickCmd: string
     commands: QuickCmds[]
+    commAppendCR: boolean
     childGroups: ICmdGroup[]
     groupCollapsed: {[id: string]: boolean} = {}
 
     constructor (
         public config: ConfigService,
-        private ngbModal: NgbModal,
+        private ngbModal: NgbModal
     ) {
         this.commands = this.config.store.qc.cmds
         this.refresh()
+    }
+
+    ngOnInit () {
+        this.commAppendCR = this.config.store.qc.commAppendCR
+        const _groups = this.commands.map(_cmd => _cmd.group)
+        _groups.forEach(group => {
+                this.groupCollapsed[group] = true
+        })
+        this.refresh()
+    }
+
+    onCommAppendCRChange () {
+        if (this.commAppendCR != this.config.store.qc.commAppendCR) {
+            this.config.store.qc.commAppendCR = this.commAppendCR
+            this.config.save()
+            this.refresh()
+        }
     }
 
     createCommand () {
@@ -56,6 +75,24 @@ export class QuickCmdsSettingsTabComponent {
             this.config.save()
             this.refresh()
         }
+    }
+
+    addGroup (group: ICmdGroup) {
+        let command: QuickCmds = {
+            name: '',
+            text: '',
+            group: group.name,
+            appendCR: true,
+        }
+
+        let modal = this.ngbModal.open(EditCommandModalComponent)
+        modal.componentInstance.command = command
+        modal.result.then(result => {
+            this.commands.push(result)
+            this.config.store.qc.cmds = this.commands
+            this.config.save()
+            this.refresh()
+        })
     }
 
     editGroup (group: ICmdGroup) {
@@ -108,6 +145,16 @@ export class QuickCmdsSettingsTabComponent {
             }
             group.cmds.push(cmd)
         }
+    }
+
+    clickGroup (group: ICmdGroup) {
+        for (const key in this.groupCollapsed) {
+            if (!this.groupCollapsed[group.name])
+                break
+            
+            this.groupCollapsed[key] = true
+        }
+        this.groupCollapsed[group.name] = !this.groupCollapsed[group.name]
     }
    
 }

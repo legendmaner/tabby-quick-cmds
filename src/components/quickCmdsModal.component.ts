@@ -19,7 +19,7 @@ export class QuickCmdsModalComponent {
     constructor (
         public modalInstance: NgbActiveModal,
         private config: ConfigService,
-        private app: AppService,
+        private app: AppService
     ) { }
 
     ngOnInit () {
@@ -144,6 +144,12 @@ export class QuickCmdsModalComponent {
             }
         }
         else {
+            for (const key in this.groupCollapsed) {
+                if (!this.groupCollapsed[group.name])
+                    break
+
+                this.groupCollapsed[key] = true
+            }
             this.groupCollapsed[group.name] = !this.groupCollapsed[group.name]
         }
     }
