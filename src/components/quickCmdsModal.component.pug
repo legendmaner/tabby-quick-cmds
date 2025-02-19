@@ -9,12 +9,6 @@
             (keyup.enter)='quickSend()',
             (keyup.control.enter)='quickSendAll()',
         )
-        toggle.ml-1.appendCR(
-            title="Automatically append a '\\n' char to the end",
-            [(ngModel)]='commAppendCR',
-            (ngModelChange)='onCommAppendCRChange()',
-        )
-
     .list-group.mt-3.connections-list
         ng-container(*ngFor='let group of childGroups') 
             .list-group-item.list-group-item-action.d-flex.align-items-center(

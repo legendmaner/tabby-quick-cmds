@@ -32,14 +32,6 @@ export class QuickCmdsModalComponent {
         this.refresh()
     }
 
-    onCommAppendCRChange () {
-        if (this.commAppendCR != this.config.store.qc.commAppendCR) {
-            this.config.store.qc.commAppendCR = this.commAppendCR
-            this.config.save()
-            this.refresh()
-        }
-    }
-
     quickSend () {
         this._send(this.app.activeTab, this.quickCmd, this.commAppendCR)
         this.close()
