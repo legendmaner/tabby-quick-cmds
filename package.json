@@ -1,12 +1,12 @@
 {
-  "name": "tabby-quick-cmds",
-  "version": "1.0.5",
+  "name": "tabby-quick-cmds-pro",
+  "version": "1.0.6",
   "description": "Quick commands manager for Tabby",
   "homepage": "https://github.com/yuzifu/terminus-quick-cmds",
   "keywords": [
     "terminus-plugin",
     "tabby-plugin",
-    "quick-commands"
+    "quick-commands-pro"
   ],
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -17,7 +17,7 @@
   "files": [
     "dist"
   ],
-  "author": "minyoad",
+  "author": "minyoad,yuzifu",
   "license": "MIT",
   "devDependencies": {
     "@types/webpack-env": "^1.16.3",
