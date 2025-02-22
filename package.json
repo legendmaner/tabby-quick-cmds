@@ -1,10 +1,9 @@
 {
   "name": "tabby-quick-cmds-pro",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Quick commands manager for Tabby",
-  "homepage": "https://github.com/yuzifu/terminus-quick-cmds",
+  "homepage": "https://github.com/yuzifu/tabby-quick-cmds",
   "keywords": [
-    "terminus-plugin",
     "tabby-plugin",
     "quick-commands-pro"
   ],
@@ -58,9 +57,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yuzifu/terminus-quick-cmds.git"
+    "url": "git+https://github.com/yuzifu/tabby-quick-cmds.git"
   },
   "bugs": {
-    "url": "https://github.com/yuzifu/terminus-quick-cmds/issues"
+    "url": "https://github.com/yuzifu/tabby-quick-cmds/issues"
   }
 }
