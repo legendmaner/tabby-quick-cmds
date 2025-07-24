@@ -1,11 +1,11 @@
 {
-  "name": "tabby-quick-cmds-pro",
-  "version": "1.0.7",
-  "description": "Quick commands manager for Tabby",
-  "homepage": "https://github.com/yuzifu/tabby-quick-cmds",
+  "name": "tabby-quick-cmds",
+  "version": "1.0.8",
+  "description": "Quick commands manager for Tabby, with keyboard navigation.",
+  "homepage": "https://github.com/legendmaner/tabby-quick-cmds",
   "keywords": [
     "tabby-plugin",
-    "quick-commands-pro"
+    "quick-commands"
   ],
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -16,7 +16,7 @@
   "files": [
     "dist"
   ],
-  "author": "minyoad,yuzifu",
+  "author": "legendmaner",
   "license": "MIT",
   "devDependencies": {
     "@types/webpack-env": "^1.16.3",
@@ -57,9 +57,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yuzifu/tabby-quick-cmds.git"
+    "url": "git+https://github.com/legendmaner/tabby-quick-cmds.git"
   },
   "bugs": {
-    "url": "https://github.com/yuzifu/tabby-quick-cmds/issues"
+    "url": "https://github.com/legendmaner/tabby-quick-cmds/issues"
   }
 }
