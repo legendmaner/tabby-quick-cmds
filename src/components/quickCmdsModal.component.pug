@@ -6,25 +6,17 @@
             autofocus, 
             placeholder='Ctrl + Enter send to all', 
             (ngModelChange)='refresh()',
-            (keyup.enter)='quickSend()',
+            (keydown)='handleKeyDown($event)',
             (keyup.control.enter)='quickSendAll()',
         )
     .list-group.mt-3.connections-list
-        ng-container(*ngFor='let group of childGroups') 
-            .list-group-item.list-group-item-action.d-flex.align-items-center(
-                (click)='clickGroup(group, $event)',
-                title="Shift + Click send all to active tab\nCtrl + Shift + Click send all to all tabs",
-            )
-                .fa.fa-fw.fa-chevron-right(*ngIf='groupCollapsed[group.name]')
-                .fa.fa-fw.fa-chevron-down(*ngIf='!groupCollapsed[group.name]')
-                .ml-2 {{group.name || "Ungrouped"}}
-            ng-container(*ngIf='!groupCollapsed[group.name]')
-                .list-group-item.list-group-item-action.pl-5.d-flex.align-items-center(
-                    *ngFor='let cmd of group.cmds', 
-                    (click)='send(cmd, $event)',
-                    title="Ctrl + Click send to all",
-                )
-                    .mr-auto
-                        div {{cmd.name}}
-                        .text-muted {{cmd.text}}{{cmd.appendCR ? "\\n" : ""}}
+        .list-group-item.list-group-item-action.pl-5.d-flex.align-items-center(
+            *ngFor='let cmd of filteredCmds; let i = index', 
+            (click)='send(cmd, $event)',
+            [class.selected]='i === selectedIndex',
+            title="Ctrl + Click send to all",
+        )
+            .mr-auto
+                div {{cmd.name}}
+                .text-muted {{cmd.text}}{{cmd.appendCR ? "\n" : ""}}
                         

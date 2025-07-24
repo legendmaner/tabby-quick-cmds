@@ -11,3 +11,8 @@
 .quickCmdContainer {
     display: flex !important
 }
+
+.list-group-item.selected {
+    background-color: #007bff;
+    color: #fff;
+}

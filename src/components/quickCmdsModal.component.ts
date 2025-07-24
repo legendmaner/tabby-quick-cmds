@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap'
 import { ConfigService, AppService, BaseTabComponent, SplitTabComponent } from 'terminus-core'
-import { QuickCmds, ICmdGroup } from '../api'
+import { QuickCmds } from '../api'
 import { BaseTerminalTabComponent as TerminalTabComponent } from 'terminus-terminal';
 
 
@@ -13,8 +13,8 @@ export class QuickCmdsModalComponent {
     cmds: QuickCmds[]
     quickCmd: string
     commAppendCR: boolean
-    childGroups: ICmdGroup[]
-    groupCollapsed: {[id: string]: boolean} = {}
+    selectedIndex = -1
+    filteredCmds: QuickCmds[] = []
 
     constructor (
         public modalInstance: NgbActiveModal,
@@ -25,16 +25,32 @@ export class QuickCmdsModalComponent {
     ngOnInit () {
         this.cmds = this.config.store.qc.cmds
         this.commAppendCR = this.config.store.qc.commAppendCR
-        const _groups = this.cmds.map(_cmd => _cmd.group)
-        _groups.forEach(group => {
-                this.groupCollapsed[group] = true
-        })
         this.refresh()
     }
 
+    handleKeyDown (event: KeyboardEvent) {
+        if (event.key === 'ArrowUp') {
+            this.selectedIndex = Math.max(0, this.selectedIndex - 1)
+            event.preventDefault()
+        } else if (event.key === 'ArrowDown') {
+            this.selectedIndex = Math.min(this.filteredCmds.length - 1, this.selectedIndex + 1)
+            event.preventDefault()
+        } else if (event.key === 'Enter') {
+            if (this.selectedIndex >= 0) {
+                this.send(this.filteredCmds[this.selectedIndex], null)
+            } else {
+                this.quickSend()
+            }
+        }
+    }
+
     quickSend () {
-        this._send(this.app.activeTab, this.quickCmd, this.commAppendCR)
-        this.close()
+        if (this.selectedIndex >= 0) {
+            this.send(this.filteredCmds[this.selectedIndex], null)
+        } else {
+            this._send(this.app.activeTab, this.quickCmd, this.commAppendCR)
+            this.close()
+        }
     }
 
     quickSendAll() {
@@ -113,7 +129,7 @@ export class QuickCmdsModalComponent {
     }
 
     send (cmd: QuickCmds, event: MouseEvent) {
-        if (event.ctrlKey) {
+        if (event && event.ctrlKey) {
             this._sendAll(cmd.text, cmd.appendCR)
         }
         else {
@@ -122,49 +138,17 @@ export class QuickCmdsModalComponent {
         this.close()
     }
 
-    clickGroup (group: ICmdGroup, event: MouseEvent) {
-        if (event.shiftKey) {
-            if (event.ctrlKey) {
-                for (let cmd of group.cmds) {
-                    this._sendAll(cmd.text, cmd.appendCR)
-                }
-            }
-            else {
-                for (let cmd of group.cmds) {
-                    this._send(this.app.activeTab, cmd.text, cmd.appendCR)
-                }
-            }
-        }
-        else {
-            for (const key in this.groupCollapsed) {
-                if (!this.groupCollapsed[group.name])
-                    break
-
-                this.groupCollapsed[key] = true
-            }
-            this.groupCollapsed[group.name] = !this.groupCollapsed[group.name]
-        }
-    }
-
     refresh () {
-        this.childGroups = []
+        this.selectedIndex = -1
 
-        let cmds = this.cmds
         if (this.quickCmd) {
-            cmds = cmds.filter(cmd => (cmd.name + cmd.group + cmd.text).toLowerCase().includes(this.quickCmd))
-        }
-
-        for (let cmd of cmds) {
-            cmd.group = cmd.group || null
-            let group = this.childGroups.find(x => x.name === cmd.group)
-            if (!group) {
-                group = {
-                    name: cmd.group,
-                    cmds: [],
-                }
-                this.childGroups.push(group)
-            }
-            group.cmds.push(cmd)
+            const searchTerm = this.quickCmd.toLowerCase();
+            this.filteredCmds = this.cmds.filter(cmd => {
+                const searchableText = (cmd.name || '') + (cmd.group || '') + (cmd.text || '');
+                return searchableText.toLowerCase().includes(searchTerm);
+            });
+        } else {
+            this.filteredCmds = this.cmds
         }
     }
 }
